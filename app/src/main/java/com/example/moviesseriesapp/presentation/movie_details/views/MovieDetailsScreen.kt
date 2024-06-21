@@ -175,7 +175,7 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
 fun Contents(movieDetails: MovieDetails) {
     Column {
         Text(
-            text = "Writers", fontSize = 26.sp, fontWeight = FontWeight.W500, lineHeight = 26.sp, color = Color(
+            text = "Plot", fontSize = 26.sp, fontWeight = FontWeight.W500, lineHeight = 26.sp, color = Color(
                 26,
                 115,
                 232,
