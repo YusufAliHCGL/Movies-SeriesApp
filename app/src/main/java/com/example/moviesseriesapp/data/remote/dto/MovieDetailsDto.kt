@@ -58,5 +58,5 @@ data class MovieDetailsDto(
 )
 
 fun MovieDetailsDto.toMovieDetails(): MovieDetails {
-    return MovieDetails(actors, awards, country, director, genre, imdbID, imdbRating, language, plot, poster, released, title, type, year)
+    return MovieDetails(actors, awards, country, director, genre, imdbID, imdbRating, language, plot, poster, released, title, type, year, writer)
 }

@@ -14,5 +14,6 @@ data class MovieDetails(
     val released: String,
     val title: String,
     val type: String,
-    val year: String
+    val year: String,
+    val writer: String
 )

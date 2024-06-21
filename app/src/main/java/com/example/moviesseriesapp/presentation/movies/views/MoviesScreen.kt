@@ -24,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.moviesseriesapp.presentation.Screen
@@ -55,6 +57,10 @@ fun MoviesScreen(paddingValues: PaddingValues, navController: NavController, mov
         if(state.isLoading) {
             CircularProgressIndicator(color = Color.Blue, trackColor = Color.Red,
                 modifier = Modifier.align(Alignment.Center))
+        }
+        if(state.error.isNotEmpty()) {
+            Text(text = state.error, modifier = Modifier.align(Alignment.Center), color = Color.Red, fontSize = 36.sp
+            , fontWeight = FontWeight.W600)
         }
     }
 }
