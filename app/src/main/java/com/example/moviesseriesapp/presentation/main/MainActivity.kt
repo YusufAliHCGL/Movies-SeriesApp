@@ -1,4 +1,4 @@
-package com.example.moviesseriesapp.presentation
+package com.example.moviesseriesapp.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.moviesseriesapp.presentation.Screen
+import com.example.moviesseriesapp.presentation.favorites.FavoritesScreen
 import com.example.moviesseriesapp.presentation.movie_details.views.MovieDetailsScreen
 import com.example.moviesseriesapp.presentation.movies.views.MoviesScreen
 import com.example.moviesseriesapp.presentation.ui.theme.MoviesSeriesAppTheme
@@ -23,14 +25,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MoviesSeriesAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val navController = rememberNavController()
+                val navController = rememberNavController()
+                Scaffold(modifier = Modifier.fillMaxSize(), topBar = { AppBar(navController = navController) }) { innerPadding ->
                     NavHost(navController = navController, startDestination = Screen.MoviesScreen.route) {
                         composable(route = Screen.MoviesScreen.route) {
                                 MoviesScreen(paddingValues = innerPadding, navController = navController)
                         }
                         composable(route = Screen.MovieDetailsScreen.route+"/{${IMDB_ID}}") {
                                MovieDetailsScreen(paddingValues = innerPadding)
+                        }
+                        composable(route = Screen.FavoritesScreen.route) {
+                                FavoritesScreen()
                         }
                     }
                 }
