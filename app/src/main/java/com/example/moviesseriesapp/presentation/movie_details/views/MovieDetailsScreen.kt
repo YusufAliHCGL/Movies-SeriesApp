@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -168,6 +169,9 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                     fontSize = 30.sp,
                     fontWeight = FontWeight.W500,
                     color = Color(0, 8, 255, 255))
+                Button(onClick = { movieDetailsViewModel.insertToDatabase() }) {
+                    Text(text = "Add")
+                }
             }
                 if (isShowInfo.value) {
                     AlertDialog(onDismissRequest = {isShowInfo.value = false}, confirmButton = {}, title = { Text(
