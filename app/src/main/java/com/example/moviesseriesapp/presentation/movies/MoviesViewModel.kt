@@ -2,6 +2,8 @@ package com.example.moviesseriesapp.presentation.movies
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.text.toUpperCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesseriesapp.domain.use_case.get_movies.GetMoviesUseCase
@@ -10,6 +12,7 @@ import com.example.moviesseriesapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +39,8 @@ class MoviesViewModel @Inject constructor(private val getMoviesUseCase: GetMovie
                     _state.value = MoviesState(isLoading = true)
                 }
                 is Resource.Success -> {
-                    _state.value = MoviesState(movies = resource.data ?: emptyList())
+                    val list = resource.data!!.sortedBy { it.title.lowercase() }
+                    _state.value = MoviesState(movies = list ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)

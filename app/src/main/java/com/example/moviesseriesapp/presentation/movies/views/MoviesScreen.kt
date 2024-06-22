@@ -1,6 +1,8 @@
 package com.example.moviesseriesapp.presentation.movies.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,31 +41,41 @@ import com.example.moviesseriesapp.presentation.movies.MoviesViewModel
 @Composable
 fun MoviesScreen(paddingValues: PaddingValues, navController: NavController, moviesViewModel: MoviesViewModel = hiltViewModel()) {
     val state = moviesViewModel.state.value
-    Box(modifier = Modifier
+
+    BoxWithConstraints(modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues)) {
-        Column {
-            MoviesSearchBar(hint = "Batman") {search ->
-                moviesViewModel.onEvent(MoviesEvent.Search(search))
-            }
-            Spacer(modifier = Modifier.padding(5.dp))
-            LazyColumn {
-                items(state.movies) {movie ->
-                    MoviesListRow(movie) {imdbId ->
-                        navController.navigate(route = Screen.MovieDetailsScreen.route+"/${imdbId}")
+        .padding(paddingValues)
+        ) {
+        val gradientBackground = Brush.linearGradient(
+            colors = listOf(Color(240,0,0), Color(255, 225,204)),
+            start = Offset(0f,0f),
+            end = Offset(maxWidth.value, maxHeight.value)
+        )
+
+        Box(modifier = Modifier.fillMaxSize().background(brush = gradientBackground)) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                MoviesSearchBar(hint = "Batman") {search ->
+                    moviesViewModel.onEvent(MoviesEvent.Search(search))
+                }
+                Spacer(modifier = Modifier.padding(5.dp))
+                LazyColumn {
+                    items(state.movies) {movie ->
+                        MoviesListRow(movie) {imdbId ->
+                            navController.navigate(route = Screen.MovieDetailsScreen.route+"/${imdbId}")
+                        }
                     }
                 }
             }
+            if(state.isLoading) {
+                CircularProgressIndicator(color = Color.Black, trackColor = Color.Yellow,
+                    modifier = Modifier.align(Alignment.Center))
+            }
+            if(state.error.isNotEmpty()) {
+                Text(text = state.error, modifier = Modifier.align(Alignment.Center), color = Color.Red, fontSize = 36.sp, lineHeight = 38.sp, textAlign = TextAlign.Center
+                    , fontWeight = FontWeight.W600)
+            }
         }
 
-        if(state.isLoading) {
-            CircularProgressIndicator(color = Color.Blue, trackColor = Color.Red,
-                modifier = Modifier.align(Alignment.Center))
-        }
-        if(state.error.isNotEmpty()) {
-            Text(text = state.error, modifier = Modifier.align(Alignment.Center), color = Color.Red, fontSize = 36.sp
-            , fontWeight = FontWeight.W600)
-        }
     }
 }
 
@@ -77,7 +91,7 @@ fun MoviesSearchBar(hint: String, onSearch: (String) -> Unit) {
         TextField(value = text ,onValueChange = {
             text = it
         },  keyboardActions = KeyboardActions(onDone = {
-            onSearch(text)
+            onSearch(text.trim())
         }),
             singleLine = true,
             maxLines = 1,
@@ -85,10 +99,14 @@ fun MoviesSearchBar(hint: String, onSearch: (String) -> Unit) {
                 .fillMaxWidth()
                 .onFocusChanged {
                     isHintDisplayed = text.isEmpty() && it.isFocused != true
-                }.clip(CircleShape))
+                }
+                .clip(CircleShape))
         if (isHintDisplayed) {
-            Text(text = hint, color = Color(157, 166, 164), textAlign = TextAlign.Start, modifier = Modifier.align(
-                alignment = Alignment.CenterStart).padding(start = 10.dp))
+            Text(text = hint, color = Color(157, 166, 164), textAlign = TextAlign.Start, modifier = Modifier
+                .align(
+                    alignment = Alignment.CenterStart
+                )
+                .padding(start = 10.dp))
         }
     }
 }

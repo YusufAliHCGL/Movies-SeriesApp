@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.moviesseriesapp.R
 import com.example.moviesseriesapp.domain.model.MovieDetails
 import com.example.moviesseriesapp.presentation.movie_details.MovieDetailsViewModel
 
@@ -46,27 +49,52 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
         endY = 2000f
         )
         Box(modifier = Modifier
-            .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
+            .padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding()
+            )
             .fillMaxSize()
             .background(brush = gradient)) {
             val state = movieDetailsViewModel.state.value
             val isShowInfo = remember {
                 mutableStateOf(false)
             }
+            val isImageLoading = remember {
+                mutableStateOf(false)
+            }
+            val isImageError = remember {
+                mutableStateOf(false)
+            }
             val scrollState = rememberScrollState()
           
             state.movieDetails?.let {movieDetails ->
             Column(modifier = Modifier.verticalScroll(scrollState)) {
+                Box(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(300.dp, 300.dp)
+                    .clip(RoundedCornerShape(40.dp))) {
+                    Image(painter = rememberAsyncImagePainter(movieDetails.poster, onError = {isImageError.value = true
+                        isImageLoading.value = false}, onLoading = {isImageLoading.value = true
+                        isImageError.value = false}, onSuccess = {isImageError.value = false
+                        isImageLoading.value = false}), contentDescription = movieDetails.title,
+                        modifier = Modifier
+                            .size(300.dp, 300.dp)
+                            .clip(RoundedCornerShape(40.dp))
+                            .align(Alignment.Center)
+                            .clickable {
+                                isShowInfo.value = true
+                            },
+                        contentScale = ContentScale.Crop)
+                    if (isImageError.value) {
+                        val imagePainter: Painter = painterResource(id = R.drawable.image_error)
+                        Image(painter = imagePainter, contentDescription = "This image cannot be accessed!", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    }
+                    if(isImageLoading.value) {
+                        CircularProgressIndicator(color = Color.Black, trackColor = Color.Cyan, modifier = Modifier.align(
+                            Alignment.Center))
+                    }
+                }
 
-                Image(painter = rememberAsyncImagePainter(movieDetails.poster), contentDescription = movieDetails.title,
-                    modifier = Modifier
-                        .size(300.dp, 300.dp)
-                        .clip(RoundedCornerShape(40.dp))
-                        .align(Alignment.CenterHorizontally)
-                        .clickable {
-                            isShowInfo.value = true
-                        },
-                    contentScale = ContentScale.Crop)
                 Text(text = movieDetails.title,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -158,11 +186,12 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
 
             }
             if (state.isLoading) {
-                    CircularProgressIndicator(color = Color.Blue, trackColor = Color.Red,
+                    CircularProgressIndicator(color = Color.White, trackColor = Color.Black,
                         modifier = Modifier.align(Alignment.Center))
             }
             if(state.error.isNotEmpty()) {
-              Text(text = state.error, modifier = Modifier.align(Alignment.Center))
+                Text(text = state.error, modifier = Modifier.align(Alignment.Center), color = Color.Red, fontSize = 36.sp, lineHeight = 38.sp, textAlign = TextAlign.Center
+                    , fontWeight = FontWeight.W600)
             }
 
         }
@@ -173,7 +202,8 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
 
 @Composable
 fun Contents(movieDetails: MovieDetails) {
-    Column {
+    val alertScrollState = rememberScrollState()
+    Column(modifier = Modifier.verticalScroll(alertScrollState)) {
         Text(
             text = "Plot", fontSize = 26.sp, fontWeight = FontWeight.W500, lineHeight = 26.sp, color = Color(
                 26,
