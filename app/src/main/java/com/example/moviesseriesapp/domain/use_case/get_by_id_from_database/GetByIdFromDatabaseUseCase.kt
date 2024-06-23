@@ -6,7 +6,7 @@ import com.example.moviesseriesapp.util.Constants.DATA_ERROR
 import com.example.moviesseriesapp.util.Resource
 import javax.inject.Inject
 
-class GetByIdFromDatabase @Inject constructor(private val favoriteRepository: FavoriteRepository) {
+class GetByIdFromDatabaseUseCase @Inject constructor(private val favoriteRepository: FavoriteRepository) {
     suspend fun executeGetByIdFromDatabase(imdbId: String): Resource<Favorite> {
 
         return try {

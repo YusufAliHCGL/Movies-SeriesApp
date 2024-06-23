@@ -1,6 +1,7 @@
 package com.example.moviesseriesapp.data.room
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.moviesseriesapp.domain.model.Favorite
@@ -17,4 +18,7 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM Favorite WHERE imdbID = :imdbId")
     suspend fun getByImdbId(imdbId: String): Favorite
+
+    @Delete
+    suspend fun deleteFromFavorites(favorite: Favorite): Int
 }

@@ -174,16 +174,19 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                     fontWeight = FontWeight.W500,
                     color = Color(0, 8, 255, 255))
                 if (controlState.isThere) {
-                    Button(onClick = { TODO() }) {
+                    isClickable.value = true
+                    Button(onClick = { movieDetailsViewModel.deleteFromData() }, enabled = isClickable.value) {
                         Text(text = "Remove From Favorites")
+
                     }
                 }else {
+                    isClickable.value = true
                     Button(onClick = { movieDetailsViewModel.insertToDatabase() }, enabled = isClickable.value) {
                         Text(text = "Add")
                     }
                 }
                 if (controlState.error.isNotEmpty()) {
-                    isClickable.value = false
+                    TODO()
                 }
 
             }
@@ -215,7 +218,7 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                 isClickable.value = false
             }
             if (favoriteState.error.isNotEmpty()) {
-                TODO()
+                println(favoriteState.error)
             }
 
         }

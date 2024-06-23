@@ -21,4 +21,8 @@ class FavoriteRepositoryImpl @Inject constructor(favoriteDatabase: FavoriteDatab
         return dao.getByImdbId(imdbId)
     }
 
+    override suspend fun deleteFromFavorite(favorite: Favorite): Int {
+        return dao.deleteFromFavorites(favorite)
+    }
+
 }
