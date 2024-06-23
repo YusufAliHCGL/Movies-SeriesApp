@@ -73,7 +73,7 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                 mutableStateOf(true)
             }
             state.movieDetails?.let {movieDetails ->
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Column(modifier = Modifier.verticalScroll(scrollState).padding(5.dp)) {
                 Box(modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(300.dp, 300.dp)

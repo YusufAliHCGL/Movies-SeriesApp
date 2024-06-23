@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.moviesseriesapp.presentation.Screen
-import com.example.moviesseriesapp.presentation.favorites.FavoritesScreen
+import com.example.moviesseriesapp.presentation.favorites.view.FavoritesScreen
 import com.example.moviesseriesapp.presentation.movie_details.views.MovieDetailsScreen
 import com.example.moviesseriesapp.presentation.movies.views.MoviesScreen
 import com.example.moviesseriesapp.presentation.ui.theme.MoviesSeriesAppTheme
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                                MovieDetailsScreen(paddingValues = innerPadding)
                         }
                         composable(route = Screen.FavoritesScreen.route) {
-                                FavoritesScreen()
+                                FavoritesScreen(paddingValues = innerPadding, navController = navController)
                         }
                     }
                 }
