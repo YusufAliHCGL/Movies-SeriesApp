@@ -6,4 +6,6 @@ interface FavoriteRepository {
     suspend fun getFavoritesFromDatabase(): List<Favorite>
 
     suspend fun insertToFavoriteDatabase(favorite: Favorite): Long
+
+    suspend fun getDataById(imdbId: String): Favorite
 }

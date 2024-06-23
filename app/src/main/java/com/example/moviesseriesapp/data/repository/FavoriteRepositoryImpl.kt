@@ -6,7 +6,7 @@ import com.example.moviesseriesapp.domain.model.Favorite
 import com.example.moviesseriesapp.domain.repository.FavoriteRepository
 import javax.inject.Inject
 
-class FavoriteRepositoryImpl @Inject constructor(private val favoriteDatabase: FavoriteDatabase)
+class FavoriteRepositoryImpl @Inject constructor(favoriteDatabase: FavoriteDatabase)
     : FavoriteRepository {
 
     private val dao: FavoriteDao = favoriteDatabase.getDao()
@@ -15,6 +15,10 @@ class FavoriteRepositoryImpl @Inject constructor(private val favoriteDatabase: F
     }
     override suspend fun insertToFavoriteDatabase(favorite: Favorite): Long {
         return dao.insertToDatabase(favorite = favorite)
+    }
+
+    override suspend fun getDataById(imdbId: String): Favorite {
+        return dao.getByImdbId(imdbId)
     }
 
 }

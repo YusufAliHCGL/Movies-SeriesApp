@@ -15,4 +15,6 @@ interface FavoriteDao {
     @Query("SELECT * FROM Favorite")
     suspend fun getAllFromDatabase(): List<Favorite>
 
+    @Query("SELECT * FROM Favorite WHERE imdbID = :imdbId")
+    suspend fun getByImdbId(imdbId: String): Favorite
 }

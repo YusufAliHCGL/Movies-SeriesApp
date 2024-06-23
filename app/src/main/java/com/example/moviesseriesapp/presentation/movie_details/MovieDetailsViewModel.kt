@@ -6,20 +6,34 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesseriesapp.domain.model.Favorite
+import com.example.moviesseriesapp.domain.use_case.get_by_id_from_database.GetByIdFromDatabase
 import com.example.moviesseriesapp.domain.use_case.get_movie_details.GetMovieDetailsUseCase
 import com.example.moviesseriesapp.domain.use_case.insert_to_favorite_database.InsertToFavoriteDatabaseUseCase
+import com.example.moviesseriesapp.presentation.movies.ControlState
+import com.example.moviesseriesapp.presentation.movies.FavoriteState
+import com.example.moviesseriesapp.util.Constants.DATA_ERROR
 import com.example.moviesseriesapp.util.Constants.IMDB_ID
 import com.example.moviesseriesapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
                                                 private val insertToFavoriteDatabaseUseCase: InsertToFavoriteDatabaseUseCase,
+                                                private val getByIdFromDatabase: GetByIdFromDatabase,
     stateHandle: SavedStateHandle)
     : ViewModel() {
+
+    private var _favoriteState = mutableStateOf(FavoriteState())
+    val favoriteState: State<FavoriteState>
+        get() = _favoriteState
+
+    private var _controlState = mutableStateOf(ControlState())
+    val controlState: State<ControlState>
+        get() = _controlState
 
     private var _state = mutableStateOf(MovieDetailsState())
     val state: State<MovieDetailsState>
@@ -28,6 +42,25 @@ class MovieDetailsViewModel @Inject constructor(private val getMovieDetailsUseCa
     init {
         stateHandle.get<String>(IMDB_ID)?.let {imdbId ->
             getMovieDetails(imdbId = imdbId)
+            controlDataById(imdbId = imdbId)
+        }
+
+    }
+
+    private fun controlDataById(imdbId: String) = viewModelScope.launch {
+        val resource = getByIdFromDatabase.executeGetByIdFromDatabase(imdbId = imdbId)
+        when(resource) {
+            is Resource.Error -> {
+                if (resource.message == DATA_ERROR) {
+                    _controlState.value = ControlState(isThere = false)
+                }else {
+                    _controlState.value = ControlState(error = resource.message ?: "Error")
+                }
+            }
+            is Resource.Loading -> {}
+            is Resource.Success -> {
+                _controlState.value = ControlState(isThere = true)
+            }
         }
     }
 
@@ -54,13 +87,13 @@ class MovieDetailsViewModel @Inject constructor(private val getMovieDetailsUseCa
             insertToFavoriteDatabaseUseCase.executeInsertToFavoriteDatabase(favorite).onEach {resource ->
                 when(resource) {
                     is Resource.Error -> {
-                        println(resource.message)
+                        _favoriteState.value = FavoriteState(error = resource.message ?: "Error")
                     }
                     is Resource.Loading -> {
-                        println("loading")
+                        _favoriteState.value = FavoriteState(isLoading = true)
                     }
                     is Resource.Success -> {
-                        println("success"+resource.data)
+                        _controlState.value = ControlState(isThere = true)
                     }
                 }
             }.launchIn(viewModelScope)

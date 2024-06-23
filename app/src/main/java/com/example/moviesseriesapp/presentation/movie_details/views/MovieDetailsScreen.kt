@@ -57,6 +57,8 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
             .fillMaxSize()
             .background(brush = gradient)) {
             val state = movieDetailsViewModel.state.value
+            val controlState = movieDetailsViewModel.controlState.value
+            val favoriteState = movieDetailsViewModel.favoriteState.value
             val isShowInfo = remember {
                 mutableStateOf(false)
             }
@@ -67,7 +69,9 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                 mutableStateOf(false)
             }
             val scrollState = rememberScrollState()
-          
+            val isClickable = remember {
+                mutableStateOf(true)
+            }
             state.movieDetails?.let {movieDetails ->
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 Box(modifier = Modifier
@@ -169,9 +173,19 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                     fontSize = 30.sp,
                     fontWeight = FontWeight.W500,
                     color = Color(0, 8, 255, 255))
-                Button(onClick = { movieDetailsViewModel.insertToDatabase() }) {
-                    Text(text = "Add")
+                if (controlState.isThere) {
+                    Button(onClick = { TODO() }) {
+                        Text(text = "Remove From Favorites")
+                    }
+                }else {
+                    Button(onClick = { movieDetailsViewModel.insertToDatabase() }, enabled = isClickable.value) {
+                        Text(text = "Add")
+                    }
                 }
+                if (controlState.error.isNotEmpty()) {
+                    isClickable.value = false
+                }
+
             }
                 if (isShowInfo.value) {
                     AlertDialog(onDismissRequest = {isShowInfo.value = false}, confirmButton = {}, title = { Text(
@@ -196,6 +210,12 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
             if(state.error.isNotEmpty()) {
                 Text(text = state.error, modifier = Modifier.align(Alignment.Center), color = Color.Red, fontSize = 36.sp, lineHeight = 38.sp, textAlign = TextAlign.Center
                     , fontWeight = FontWeight.W600)
+            }
+            if (favoriteState.isLoading) {
+                isClickable.value = false
+            }
+            if (favoriteState.error.isNotEmpty()) {
+                TODO()
             }
 
         }
