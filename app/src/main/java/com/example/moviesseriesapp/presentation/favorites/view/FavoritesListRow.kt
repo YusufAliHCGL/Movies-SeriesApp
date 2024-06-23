@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,10 +41,11 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
     val isClickable = remember {
         mutableStateOf(true)
     }
-    Box(modifier = Modifier
+    BoxWithConstraints(modifier = Modifier
         .fillMaxSize()
         .padding(vertical = 5.dp)
     ) {
+        val imageSize = (maxWidth.value/2).dp
         Row( modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
@@ -58,7 +60,7 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
                 mutableStateOf(false)
             }
             Box(modifier = Modifier
-                .size(220.dp, 220.dp)
+                .size(imageSize, imageSize)
                 .clip(RoundedCornerShape(40.dp))
                 .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp))) {
                 Image(painter = rememberAsyncImagePainter(model = favorite.poster, onLoading = {isImageLoading.value = true
@@ -71,7 +73,7 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
                     }),
                     contentDescription = favorite.title,
                     modifier = Modifier
-                        .size(220.dp, 220.dp)
+                        .size(imageSize, imageSize)
                         .clip(
                             RoundedCornerShape(40.dp)
                         )
