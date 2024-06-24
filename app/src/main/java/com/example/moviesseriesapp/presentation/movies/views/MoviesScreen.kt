@@ -28,6 +28,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,16 +53,23 @@ fun MoviesScreen(paddingValues: PaddingValues, navController: NavController, mov
             end = Offset(maxWidth.value, maxHeight.value)
         )
 
-        Box(modifier = Modifier.fillMaxSize().background(brush = gradientBackground)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(brush = gradientBackground)) {
             Column(modifier = Modifier.fillMaxSize()) {
-                MoviesSearchBar(hint = "Batman") {search ->
+                MoviesSearchBar(hint = "Type To Search") {search ->
                     moviesViewModel.onEvent(MoviesEvent.Search(search))
                 }
                 Spacer(modifier = Modifier.padding(5.dp))
                 LazyColumn {
                     items(state.movies) {movie ->
                         MoviesListRow(movie) {imdbId ->
-                            navController.navigate(route = Screen.MovieDetailsScreen.route+"/${imdbId}")
+                            navController.navigate(route = Screen.MovieDetailsScreen.route+"/${imdbId}") {
+                                popUpTo(Screen.MoviesScreen.route) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
                 }
@@ -86,7 +94,7 @@ fun MoviesSearchBar(hint: String, onSearch: (String) -> Unit) {
             mutableStateOf("")
         }
         var isHintDisplayed by remember {
-            mutableStateOf(hint.isNotEmpty())
+            mutableStateOf(false)
         }
         TextField(value = text ,onValueChange = {
             text = it
@@ -95,6 +103,7 @@ fun MoviesSearchBar(hint: String, onSearch: (String) -> Unit) {
         }),
             singleLine = true,
             maxLines = 1,
+            textStyle = TextStyle(fontSize = 18.sp, color = Color.Black, fontWeight = FontWeight.W500),
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged {
@@ -106,7 +115,7 @@ fun MoviesSearchBar(hint: String, onSearch: (String) -> Unit) {
                 .align(
                     alignment = Alignment.CenterStart
                 )
-                .padding(start = 10.dp))
+                .padding(start = 10.dp), fontSize = 18.sp)
         }
     }
 }

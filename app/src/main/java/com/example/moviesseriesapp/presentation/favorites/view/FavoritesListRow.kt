@@ -38,9 +38,6 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
         startX = 0f,
         endX = 1000f
     )
-    val isClickable = remember {
-        mutableStateOf(true)
-    }
     BoxWithConstraints(modifier = Modifier
         .fillMaxSize()
         .padding(vertical = 5.dp)
@@ -48,10 +45,8 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
         val imageSize = (maxWidth.value/2).dp
         Row( modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
-            .clickable(enabled = isClickable.value) {
+            .clickable {
                 onClick(favorite.imdbID)
-                isClickable.value = false
             }) {
             val isImageLoading = remember {
                 mutableStateOf(false)
@@ -62,6 +57,7 @@ fun FavoritesListRow(favorite: Favorite, onClick: (String) -> Unit) {
             Box(modifier = Modifier
                 .size(imageSize, imageSize)
                 .clip(RoundedCornerShape(40.dp))
+                .padding(4.dp)
                 .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp))) {
                 Image(painter = rememberAsyncImagePainter(model = favorite.poster, onLoading = {isImageLoading.value = true
                     isError.value = false},

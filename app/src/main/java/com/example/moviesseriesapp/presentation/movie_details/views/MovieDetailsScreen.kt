@@ -1,9 +1,11 @@
 package com.example.moviesseriesapp.presentation.movie_details.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +52,7 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
         startY = 0f,
         endY = 2000f
         )
-        Box(modifier = Modifier
+        BoxWithConstraints(modifier = Modifier
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding()
@@ -72,18 +75,24 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
             val isClickable = remember {
                 mutableStateOf(true)
             }
+            val isDataError = remember {
+                mutableStateOf(false)
+            }
+            val imageSize = (maxWidth.value*0.75).dp
             state.movieDetails?.let {movieDetails ->
-            Column(modifier = Modifier.verticalScroll(scrollState).padding(5.dp)) {
+            Column(modifier = Modifier
+                .verticalScroll(scrollState)
+                .padding(5.dp)) {
                 Box(modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .size(300.dp, 300.dp)
+                    .size(imageSize)
                     .clip(RoundedCornerShape(40.dp))) {
                     Image(painter = rememberAsyncImagePainter(movieDetails.poster, onError = {isImageError.value = true
                         isImageLoading.value = false}, onLoading = {isImageLoading.value = true
                         isImageError.value = false}, onSuccess = {isImageError.value = false
                         isImageLoading.value = false}), contentDescription = movieDetails.title,
                         modifier = Modifier
-                            .size(300.dp, 300.dp)
+                            .size(imageSize)
                             .clip(RoundedCornerShape(40.dp))
                             .align(Alignment.Center)
                             .clickable {
@@ -175,18 +184,27 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                     color = Color(0, 8, 255, 255))
                 if (controlState.isThere) {
                     isClickable.value = true
-                    Button(onClick = { movieDetailsViewModel.deleteFromData() }, enabled = isClickable.value) {
-                        Text(text = "Remove From Favorites")
-
+                    Button(onClick = { movieDetailsViewModel.deleteFromData() }, enabled = isClickable.value,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(4.dp), colors = ButtonDefaults.buttonColors(Color.Red),
+                        border = BorderStroke(width = 2.dp, color = Color.White)
+                    ) {
+                        Text(text = "Remove From Favorites", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.W600)
                     }
                 }else {
                     isClickable.value = true
-                    Button(onClick = { movieDetailsViewModel.insertToDatabase() }, enabled = isClickable.value) {
-                        Text(text = "Add")
+                    Button(onClick = { movieDetailsViewModel.insertToDatabase() }, enabled = isClickable.value,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(4.dp), colors = ButtonDefaults.buttonColors(Color.White),
+                        border = BorderStroke(width = 2.dp, color = Color.Red)
+                    ) {
+                        Text(text = "Add To Favorites", color = Color.Red, fontSize = 22.sp, fontWeight = FontWeight.W600)
                     }
                 }
                 if (controlState.error.isNotEmpty()) {
-                    TODO()
+                    isClickable.value = false
                 }
 
             }
@@ -218,7 +236,10 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                 isClickable.value = false
             }
             if (favoriteState.error.isNotEmpty()) {
-                println(favoriteState.error)
+                isDataError.value = true
+            }
+            if (isDataError.value) {
+                AlertDialog(onDismissRequest = { isDataError.value = false }, confirmButton = {  } , title = { Text(text = "Not Successful!") })
             }
 
         }

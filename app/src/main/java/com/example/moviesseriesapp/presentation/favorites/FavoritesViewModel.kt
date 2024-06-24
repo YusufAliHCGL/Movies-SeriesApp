@@ -19,10 +19,7 @@ class FavoritesViewModel @Inject constructor(private val getFavoritesFromDatabas
     val state: State<FavoritesState>
         get() = _state
 
-    init {
-        getFavorites()
-    }
-    private fun getFavorites() {
+    fun getFavorites() {
         getFavoritesFromDatabaseUseCase.executeGetFavoritesFromDatabase().onEach { resource ->
             when(resource) {
                 is Resource.Error -> {

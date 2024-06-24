@@ -46,7 +46,6 @@ fun MoviesListRow(movie: Movie, onClick: (String) -> Unit) {
         val imageSize = (maxWidth.value/2).dp
         Row( modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
             .clickable {
                 onClick(movie.imdbID)
             }) {
@@ -60,6 +59,7 @@ fun MoviesListRow(movie: Movie, onClick: (String) -> Unit) {
             Box(modifier = Modifier
                 .size(imageSize, imageSize)
                 .clip(RoundedCornerShape(40.dp))
+                .padding(4.dp)
                 .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp))) {
                 Image(painter = rememberAsyncImagePainter(model = movie.poster, onLoading = {isImageLoading.value = true
                                                                                             isError.value = false},

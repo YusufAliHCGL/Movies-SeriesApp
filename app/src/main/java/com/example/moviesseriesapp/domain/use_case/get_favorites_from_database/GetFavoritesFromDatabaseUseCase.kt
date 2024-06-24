@@ -15,7 +15,7 @@ class GetFavoritesFromDatabaseUseCase @Inject constructor(private val favoritesR
             if (response.isNotEmpty()) {
                 emit(Resource.Success(data = response))
             }else {
-                emit(Resource.Error(message = "Favorite List is Empty"))
+                emit(Resource.Error(message = "Favorites List is Empty"))
             }
         }catch (e: Exception) {
             emit(Resource.Error(message = e.localizedMessage ?: "Error", data = null))

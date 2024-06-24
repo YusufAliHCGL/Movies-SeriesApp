@@ -60,7 +60,6 @@ class MovieDetailsViewModel @Inject constructor(private val getMovieDetailsUseCa
                         _favoriteState.value = FavoriteState(isLoading = true)
                     }
                     is Resource.Success -> {
-
                         _controlState.value = ControlState(isThere = false)
                     }
 
