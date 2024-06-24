@@ -43,7 +43,6 @@ import com.example.moviesseriesapp.domain.model.MovieDetails
 import com.example.moviesseriesapp.presentation.movie_details.MovieDetailsViewModel
 
 
-
 @Composable
 fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()) {
 
@@ -74,9 +73,6 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
             val scrollState = rememberScrollState()
             val isClickable = remember {
                 mutableStateOf(true)
-            }
-            val isDataError = remember {
-                mutableStateOf(false)
             }
             val imageSize = (maxWidth.value*0.75).dp
             state.movieDetails?.let {movieDetails ->
@@ -184,13 +180,14 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                     color = Color(0, 8, 255, 255))
                 if (controlState.isThere) {
                     isClickable.value = true
-                    Button(onClick = { movieDetailsViewModel.deleteFromData() }, enabled = isClickable.value,
+                    Button(onClick = { movieDetailsViewModel.deleteFromData()}, enabled = isClickable.value,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(4.dp), colors = ButtonDefaults.buttonColors(Color.Red),
                         border = BorderStroke(width = 2.dp, color = Color.White)
                     ) {
-                        Text(text = "Remove From Favorites", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.W600)
+                        Text(text = "Remove From Favorites", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold
+                        , modifier = Modifier.padding(5.dp))
                     }
                 }else {
                     isClickable.value = true
@@ -200,7 +197,8 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                             .padding(4.dp), colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(width = 2.dp, color = Color.Red)
                     ) {
-                        Text(text = "Add To Favorites", color = Color.Red, fontSize = 22.sp, fontWeight = FontWeight.W600)
+                        Text(text = "Add To Favorites", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold
+                        , modifier = Modifier.padding(5.dp))
                     }
                 }
                 if (controlState.error.isNotEmpty()) {
@@ -236,10 +234,7 @@ fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: Mov
                 isClickable.value = false
             }
             if (favoriteState.error.isNotEmpty()) {
-                isDataError.value = true
-            }
-            if (isDataError.value) {
-                AlertDialog(onDismissRequest = { isDataError.value = false }, confirmButton = {  } , title = { Text(text = "Not Successful!") })
+                isClickable.value = true
             }
 
         }

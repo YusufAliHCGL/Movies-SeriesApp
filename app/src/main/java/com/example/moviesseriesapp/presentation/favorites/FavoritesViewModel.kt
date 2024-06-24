@@ -19,7 +19,7 @@ class FavoritesViewModel @Inject constructor(private val getFavoritesFromDatabas
     val state: State<FavoritesState>
         get() = _state
 
-    fun getFavorites() {
+    fun getFavorites(filterEvent: FilterEvent) {
         getFavoritesFromDatabaseUseCase.executeGetFavoritesFromDatabase().onEach { resource ->
             when(resource) {
                 is Resource.Error -> {
@@ -29,7 +29,24 @@ class FavoritesViewModel @Inject constructor(private val getFavoritesFromDatabas
                     _state.value = FavoritesState(isLoading = true)
                 }
                 is Resource.Success -> {
-                    _state.value = FavoritesState(movies = resource.data ?: emptyList())
+                    resource.data?.let {list ->
+                        val returnList = when(filterEvent) {
+                            FilterEvent.AllEvent -> {
+                                list
+                            }
+                            FilterEvent.MoviesFilterEvent -> {
+                                list.filter {
+                                    it.type.lowercase() == "movie"
+                                }
+                            }
+                            FilterEvent.SeriesFilterEvent -> {
+                                list.filter {
+                                    it.type.lowercase() == "series"
+                                }
+                            }
+                        }
+                        _state.value = FavoritesState(movies = returnList ?: emptyList())
+                    }
                 }
             }
 

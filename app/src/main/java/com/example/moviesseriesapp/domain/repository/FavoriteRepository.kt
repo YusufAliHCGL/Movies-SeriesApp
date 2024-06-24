@@ -8,5 +8,6 @@ interface FavoriteRepository {
     suspend fun insertToFavoriteDatabase(favorite: Favorite): Long
 
     suspend fun getDataById(imdbId: String): Favorite
+
     suspend fun deleteFromFavorite(favorite: Favorite): Int
 }

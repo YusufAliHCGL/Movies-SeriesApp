@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesseriesapp.domain.use_case.get_movies.GetMoviesUseCase
-import com.example.moviesseriesapp.presentation.movies.views.MoviesEvent
 import com.example.moviesseriesapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

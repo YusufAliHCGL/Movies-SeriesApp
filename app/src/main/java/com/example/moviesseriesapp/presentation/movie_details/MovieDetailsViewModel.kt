@@ -117,7 +117,7 @@ class MovieDetailsViewModel @Inject constructor(private val getMovieDetailsUseCa
                     is Resource.Success -> {
                         _controlState.value = ControlState(isThere = true)
                         favoriteToDelete = favorite
-                        favoriteToDelete!!.id = resource.data!!.toInt()
+                        //favoriteToDelete!!.id = resource.data!!.toInt()
                     }
                 }
             }.launchIn(viewModelScope)

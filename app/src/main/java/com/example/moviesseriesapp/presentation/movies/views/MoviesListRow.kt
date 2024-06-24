@@ -38,57 +38,55 @@ fun MoviesListRow(movie: Movie, onClick: (String) -> Unit) {
         startX = 0f,
         endX = 1000f
     )
-
     BoxWithConstraints(modifier = Modifier
         .fillMaxSize()
         .padding(vertical = 5.dp)
         ) {
         val imageSize = (maxWidth.value/2).dp
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick(movie.imdbID)
-            }) {
-            val isImageLoading = remember {
-                mutableStateOf(false)
-            }
-            val isError = remember {
-                mutableStateOf(false)
-            }
-
-            Box(modifier = Modifier
-                .size(imageSize, imageSize)
-                .clip(RoundedCornerShape(40.dp))
-                .padding(4.dp)
-                .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp))) {
-                Image(painter = rememberAsyncImagePainter(model = movie.poster, onLoading = {isImageLoading.value = true
-                                                                                            isError.value = false},
-                    onSuccess = {isImageLoading.value = false
-                                isError.value = false},
-                    onError = {
-                        isError.value = true
-                        isImageLoading.value = false
-                    }),
-                    contentDescription = movie.title,
-                    modifier = Modifier
-                        .size(imageSize, imageSize)
-                        .clip(
-                            RoundedCornerShape(40.dp)
-                        )
-                        .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp)), contentScale = ContentScale.Crop)
-                if (isImageLoading.value) {
-                    CircularProgressIndicator(color = Color.Black, trackColor = Color.Cyan, modifier = Modifier.align(
-                        Alignment.Center))
+            Row( modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onClick(movie.imdbID)
+                }) {
+                val isImageLoading = remember {
+                    mutableStateOf(false)
                 }
-                if (isError.value) {
-                    Text(text = "Failed to load image!", color = Color(80,0,0), modifier = Modifier.align(Alignment.Center).padding(4.dp), fontSize = 28.sp, lineHeight = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.W500)
+                val isError = remember {
+                    mutableStateOf(false)
+                }
+                Box(modifier = Modifier
+                    .size(imageSize, imageSize)
+                    .clip(RoundedCornerShape(40.dp))
+                    .padding(4.dp)
+                    .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp))) {
+                    Image(painter = rememberAsyncImagePainter(model = movie.poster, onLoading = {isImageLoading.value = true
+                        isError.value = false},
+                        onSuccess = {isImageLoading.value = false
+                            isError.value = false},
+                        onError = {
+                            isError.value = true
+                            isImageLoading.value = false
+                        }),
+                        contentDescription = movie.title,
+                        modifier = Modifier
+                            .size(imageSize, imageSize)
+                            .clip(
+                                RoundedCornerShape(40.dp)
+                            )
+                            .border(width = 2.dp, brush = gradient, shape = RoundedCornerShape(40.dp)), contentScale = ContentScale.Crop)
+                    if (isImageLoading.value) {
+                        CircularProgressIndicator(color = Color.Black, trackColor = Color.Cyan, modifier = Modifier.align(
+                            Alignment.Center))
+                    }
+                    if (isError.value) {
+                        Text(text = "Failed to load image!", color = Color(80,0,0), modifier = Modifier.align(Alignment.Center).padding(4.dp), fontSize = 28.sp, lineHeight = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.W500)
+                    }
+                }
+
+                Column(modifier = Modifier.align(Alignment.CenterVertically).padding(start = 3.5.dp)) {
+                    Text(text = movie.title, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(), overflow = TextOverflow.Ellipsis, fontSize = 32.sp, lineHeight = 32.sp, fontWeight = FontWeight.W600, maxLines = 4, color = Color(0,120,0))
+                    Text(text = movie.year, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(), overflow = TextOverflow.Ellipsis, fontSize = 28.sp, fontWeight = FontWeight.W500, maxLines = 1, color = Color(100,100,240))
                 }
             }
-
-            Column(modifier = Modifier.align(Alignment.CenterVertically).padding(start = 3.5.dp)) {
-                Text(text = movie.title, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(), overflow = TextOverflow.Ellipsis, fontSize = 32.sp, lineHeight = 32.sp, fontWeight = FontWeight.W600, maxLines = 4, color = Color(0,120,0))
-                Text(text = movie.year, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(), overflow = TextOverflow.Ellipsis, fontSize = 28.sp, fontWeight = FontWeight.W500, maxLines = 1, color = Color(100,100,240))
-            }
-        }
     }
 }
