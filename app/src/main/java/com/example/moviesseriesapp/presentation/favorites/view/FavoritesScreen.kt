@@ -1,10 +1,8 @@
 package com.example.moviesseriesapp.presentation.favorites.view
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,71 +17,63 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.moviesseriesapp.presentation.Screen
+import com.example.moviesseriesapp.presentation.favorites.FavoritesEvent
 import com.example.moviesseriesapp.presentation.favorites.FavoritesViewModel
 import com.example.moviesseriesapp.presentation.favorites.FilterEvent
 
 
 @Composable
-fun FavoritesScreen(paddingValues: PaddingValues, navController: NavController,favoritesViewModel: FavoritesViewModel = hiltViewModel()) {
+fun FavoritesScreen(paddingValues: PaddingValues, navController: NavController, favoritesViewModel: FavoritesViewModel) {
     val state = favoritesViewModel.state.value
-    val filterEvent = remember {
-        mutableStateOf<FilterEvent>(FilterEvent.AllEvent)
+    LaunchedEffect(key1 = true) {
+        favoritesViewModel.onEvent(
+            FavoritesEvent.GetFavorites()
+        )
     }
-    LaunchedEffect(key1 = filterEvent.value) {
-        favoritesViewModel.getFavorites(filterEvent.value)
-    }
-    val isMovieSelected = rememberSaveable {
-        mutableStateOf(false)
-    }
-    val isSeriesSelected = rememberSaveable {
-        mutableStateOf(false)
-    }
-    BoxWithConstraints(modifier = Modifier
+    Box(modifier = Modifier
         .fillMaxSize()
         .padding(paddingValues)) {
-        val gradientBackground = Brush.linearGradient(
-            colors = listOf(Color(0,0,0), Color(0, 14,124)),
-            start = Offset(0f,0f),
-            end = Offset(maxWidth.value, maxHeight.value)
-        )
-
         Box(modifier = Modifier
-            .fillMaxSize()
-            .background(brush = gradientBackground)) {
+            .fillMaxSize()) {
             if (state.movies.isNotEmpty()) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Row(horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        FilterChip(selected = isMovieSelected.value, onClick = {
-                            isMovieSelected.value = !isMovieSelected.value },
-                            label = { Text(
-                            text = "Movies", color = Color.Black, fontSize = 22.sp, textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                        ) }, border = BorderStroke(1.dp, Color.Black),
+                        FilterChip(
+                            selected = state.filterEvent == FilterEvent.MoviesFilterEvent,
+                            onClick = {
+                                favoritesViewModel.onEvent(FavoritesEvent.ChangeFilter(
+                                    if (state.filterEvent == FilterEvent.MoviesFilterEvent) FilterEvent.AllEvent
+                                    else FilterEvent.MoviesFilterEvent
+                                ))
+                            },
+                            label = {
+                                Text(
+                                    text = "Movies", color = Color.Black, fontSize = 22.sp, textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )}, border = BorderStroke(1.dp, Color.Black),
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(vertical = 2.dp, horizontal = 4.dp),
                             colors = FilterChipDefaults.filterChipColors(Color.White)
                         )
-                        FilterChip(selected = isSeriesSelected.value, onClick = {
-                            isSeriesSelected.value = !isSeriesSelected.value
-                        }, label = { Text(
+                        FilterChip(selected = state.filterEvent == FilterEvent.SeriesFilterEvent,
+                            onClick = {
+                                favoritesViewModel.onEvent(FavoritesEvent.ChangeFilter(
+                                    if (state.filterEvent == FilterEvent.SeriesFilterEvent) FilterEvent.AllEvent
+                                    else FilterEvent.SeriesFilterEvent
+                                ))
+                            }, label = { Text(
                             text = "Series", color = Color.Black, fontSize = 22.sp, textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         ) }, border = BorderStroke(1.dp, Color.Black),
@@ -93,7 +83,22 @@ fun FavoritesScreen(paddingValues: PaddingValues, navController: NavController,f
                             colors = FilterChipDefaults.filterChipColors(Color.White))
                     }
                     LazyColumn {
-                        items(state.movies) {favorite ->
+                        val list = when(state.filterEvent) {
+                            FilterEvent.AllEvent -> {
+                                state.movies
+                            }
+                            FilterEvent.MoviesFilterEvent -> {
+                                state.movies.filter {
+                                    it.type.lowercase() == "movie"
+                                }
+                            }
+                            FilterEvent.SeriesFilterEvent -> {
+                                state.movies.filter {
+                                    it.type.lowercase() == "series"
+                                }
+                            }
+                        }
+                        items(list) {favorite ->
                             FavoritesListRow(favorite = favorite, onClick = {imdbId ->
                                 navController.navigate(Screen.MovieDetailsScreen.route+"/${imdbId}") {
                                     popUpTo(Screen.FavoritesScreen.route) {
@@ -117,14 +122,5 @@ fun FavoritesScreen(paddingValues: PaddingValues, navController: NavController,f
             }
         }
 
-    }
-    if (isMovieSelected.value == isSeriesSelected.value) {
-        filterEvent.value = FilterEvent.AllEvent
-    } else {
-        if (isMovieSelected.value) {
-            filterEvent.value = FilterEvent.MoviesFilterEvent
-        }else {
-            filterEvent.value = FilterEvent.SeriesFilterEvent
-        }
     }
 }

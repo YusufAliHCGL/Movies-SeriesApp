@@ -10,8 +10,6 @@ import com.example.moviesseriesapp.domain.use_case.delete_from_favorite_database
 import com.example.moviesseriesapp.domain.use_case.get_by_id_from_database.GetByIdFromDatabaseUseCase
 import com.example.moviesseriesapp.domain.use_case.get_movie_details.GetMovieDetailsUseCase
 import com.example.moviesseriesapp.domain.use_case.insert_to_favorite_database.InsertToFavoriteDatabaseUseCase
-import com.example.moviesseriesapp.presentation.movies.ControlState
-import com.example.moviesseriesapp.presentation.movies.FavoriteState
 import com.example.moviesseriesapp.util.Constants.DATA_ERROR
 import com.example.moviesseriesapp.util.Constants.IMDB_ID
 import com.example.moviesseriesapp.util.Resource

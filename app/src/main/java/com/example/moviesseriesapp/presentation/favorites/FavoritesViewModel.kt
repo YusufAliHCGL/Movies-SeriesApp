@@ -19,34 +19,40 @@ class FavoritesViewModel @Inject constructor(private val getFavoritesFromDatabas
     val state: State<FavoritesState>
         get() = _state
 
-    fun getFavorites(filterEvent: FilterEvent) {
+    fun onEvent(event: FavoritesEvent) {
+        when(event) {
+            is FavoritesEvent.ChangeFilter -> {
+                _state.value = state.value.copy(filterEvent = event.filterEvent)
+            }
+            is FavoritesEvent.GetFavorites -> {
+                getFavorites()
+            }
+        }
+    }
+
+    private fun getFavorites() {
         getFavoritesFromDatabaseUseCase.executeGetFavoritesFromDatabase().onEach { resource ->
             when(resource) {
                 is Resource.Error -> {
-                    _state.value = FavoritesState(error = resource.message ?: "Error!")
+                    _state.value = state.value.copy(
+                        error = resource.message ?: "Error!",
+                        isLoading = false,
+                        movies = emptyList()
+                    )
                 }
                 is Resource.Loading -> {
-                    _state.value = FavoritesState(isLoading = true)
+                    _state.value = state.value.copy(
+                        isLoading = true,
+                        error = "",
+                        movies = emptyList()
+                    )
                 }
                 is Resource.Success -> {
-                    resource.data?.let {list ->
-                        val returnList = when(filterEvent) {
-                            FilterEvent.AllEvent -> {
-                                list
-                            }
-                            FilterEvent.MoviesFilterEvent -> {
-                                list.filter {
-                                    it.type.lowercase() == "movie"
-                                }
-                            }
-                            FilterEvent.SeriesFilterEvent -> {
-                                list.filter {
-                                    it.type.lowercase() == "series"
-                                }
-                            }
-                        }
-                        _state.value = FavoritesState(movies = returnList ?: emptyList())
-                    }
+                    _state.value = state.value.copy(
+                        movies = resource.data ?: emptyList(),
+                        error = "",
+                        isLoading = false
+                    )
                 }
             }
 

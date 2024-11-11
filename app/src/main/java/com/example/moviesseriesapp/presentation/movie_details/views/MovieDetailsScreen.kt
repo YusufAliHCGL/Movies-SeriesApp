@@ -2,7 +2,6 @@ package com.example.moviesseriesapp.presentation.movie_details.views
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -45,19 +43,12 @@ import com.example.moviesseriesapp.presentation.movie_details.MovieDetailsViewMo
 
 @Composable
 fun MovieDetailsScreen(paddingValues: PaddingValues,  movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()) {
-
-        val gradient = Brush.verticalGradient(
-        colors = listOf(Color.White, Color.Green),
-        startY = 0f,
-        endY = 2000f
-        )
         BoxWithConstraints(modifier = Modifier
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding()
             )
-            .fillMaxSize()
-            .background(brush = gradient)) {
+            .fillMaxSize()) {
             val state = movieDetailsViewModel.state.value
             val controlState = movieDetailsViewModel.controlState.value
             val favoriteState = movieDetailsViewModel.favoriteState.value

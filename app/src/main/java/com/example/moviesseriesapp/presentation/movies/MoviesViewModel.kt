@@ -28,14 +28,26 @@ class MoviesViewModel @Inject constructor(private val getMoviesUseCase: GetMovie
         getMoviesUseCase.executeGetMovies(search).onEach {resource ->
             when(resource) {
                 is Resource.Error -> {
-                    _state.value = MoviesState(error = resource.message ?: "Error")
+                    _state.value = state.value.copy(
+                        error = resource.message ?: "Error",
+                        isLoading = false,
+                        movies = emptyList()
+                        )
                 }
                 is Resource.Loading -> {
-                    _state.value = MoviesState(isLoading = true)
+                    _state.value = state.value.copy(
+                        isLoading = true,
+                        error = "",
+                        movies = emptyList()
+                    )
                 }
                 is Resource.Success -> {
-                    val list = resource.data!!.sortedBy { it.title.lowercase() }
-                    _state.value = MoviesState(movies = list ?: emptyList())
+                    val list = resource.data?.sortedBy { it.title.lowercase() }
+                    _state.value = state.value.copy(
+                        movies = list ?: emptyList(),
+                        error = "",
+                        isLoading = false
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -45,6 +57,12 @@ class MoviesViewModel @Inject constructor(private val getMoviesUseCase: GetMovie
         when(event) {
             is MoviesEvent.Search -> {
                 getMovies(event.search)
+            }
+            is MoviesEvent.ChangeFilter -> {
+                _state.value = state.value.copy(filterEvent = event.filterEvent)
+            }
+            is MoviesEvent.ChangeSearchText -> {
+                _state.value = state.value.copy(search = event.text)
             }
         }
     }

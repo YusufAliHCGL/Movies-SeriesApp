@@ -1,4 +1,4 @@
-package com.example.moviesseriesapp.presentation.movies
+package com.example.moviesseriesapp.presentation.movie_details
 
 
 data class FavoriteState(
